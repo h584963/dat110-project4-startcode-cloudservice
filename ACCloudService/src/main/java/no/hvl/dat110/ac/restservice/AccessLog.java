@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 
 public class AccessLog {
 	
-	// atomic integer used to obtain identifiers for each access entry
 	private AtomicInteger cid;
 	protected ConcurrentHashMap<Integer, AccessEntry> log;
 	
@@ -16,30 +15,31 @@ public class AccessLog {
 		cid = new AtomicInteger(0);
 	}
 
-	// TODO: add an access entry to the log for the provided message and return assigned id
+
 	public int add(String message) {
 		
-		int id = 0;
+		int id = cid.getAndIncrement();
+		log.put(id, new AccessEntry(id, message));
 		
 		return id;
 	}
 		
-	// TODO: retrieve a specific access entry from the log
 	public AccessEntry get(int id) {
 		
-		return null;
+		return log.get(id);
 		
 	}
 	
-	// TODO: clear the access entry log
+
 	public void clear() {
-		
+		log.clear();
 	}
-	
-	// TODO: return JSON representation of the access log
+
 	public String toJson () {
     	
-		String json = null;
+//		String json = null;
+		
+		String json = new Gson().toJson(log.values().toArray());
     	
     	return json;
     }
